@@ -1,17 +1,20 @@
-from sqlalchemy import create_engine
 from flask import Flask, request, jsonify
-from flask_resful import Resource, Api
+from flask_restful import Resource, Api
+from sqlalchemy import create_engine
 
 db_connect = create_engine('sqlite:///exemplo.db')
-
 app = Flask(__name__)
 api = Api(app)
 
+
 class Users(Resource):
-  def get(self):
-    conn = db_connect.connect()
+    def get(self):
+        conn = db_connect.connect()
+        query = conn.execute("select * from user")
+        result = [dict(zip(tuple(query.keys()), i)) for i in query.cursor]
+        return jsonify(result)
 
-    query = conn.execute("select * from user")
-    result = [dict(zip(tuple(query.keys()), i)) for i in query.cursor]
+api.add_resource(Users, '/users') 
 
-    result jsonify(result)
+if __name__ == '__main__':
+    app.run()
