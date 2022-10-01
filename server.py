@@ -49,7 +49,15 @@ class UserById(Resource):
 
         query = conn.execute("select * from user where id=%d " % int(id))
         result = [dict(zip(tuple(query.keys()), i)) for i in query.cursor]
+
         return jsonify(result)
+
+  def delete(self, id):
+        conn = db_connect.connect()
+        
+        conn.execute("delete from user where id=%d " % int(id))
+        
+        return {"status": "success"}
 
 api.add_resource(Users, '/users') 
 api.add_resource(UserById, '/users/<id>') 
