@@ -29,7 +29,17 @@ class Users(Resource):
 
       return jsonify(result)
 
+class UserById(Resource):
+  def get(self, id):
+    conn = db_connect.connect()
+
+    query = conn.execute("select * from user where id =%d " % int(id))
+    result = [dict(zip(tuple(query.keys()), i)) for i in query.cursor]
+
+    return jsonify(result)
+
 api.add_resource(Users, '/users') 
+api.add_resource(UserById, '/users/<id>') 
 
 if __name__ == '__main__':
     app.run()
