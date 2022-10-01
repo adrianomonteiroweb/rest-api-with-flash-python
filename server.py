@@ -38,6 +38,19 @@ class UserById(Resource):
 
     return jsonify(result)
 
+  def put(self, id):
+        conn = db_connect.connect()
+  
+        name = request.json['name']
+        email = request.json['email']
+
+        conn.execute("update user set name ='" + str(name) +
+                     "', email ='" + str(email) + "'  where id =%d " % int(id))
+
+        query = conn.execute("select * from user where id=%d " % int(id))
+        result = [dict(zip(tuple(query.keys()), i)) for i in query.cursor]
+        return jsonify(result)
+
 api.add_resource(Users, '/users') 
 api.add_resource(UserById, '/users/<id>') 
 
